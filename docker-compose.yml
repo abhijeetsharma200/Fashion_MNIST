@@ -1,0 +1,32 @@
+version: '3'
+services:
+  data_preparation:
+    build: ./data_preparation
+    volumes:
+      - data-volume:/app/data
+
+  train:
+    build: ./train
+    volumes:
+      - data-volume:/app/data
+    depends_on:
+      - data_preparation
+
+  evaluate:
+    build: ./evaluate
+    volumes:
+      - data-volume:/app/data
+    depends_on:
+      - train
+
+  deploy:
+    build: ./deploy
+    ports:
+      - "5000:5000"
+    volumes:
+      - data-volume:/app/data
+    depends_on:
+      - evaluate
+
+volumes:
+  data-volume:
